@@ -4,7 +4,7 @@ require __DIR__ . '/bootstrap.php';
 use Novosga\Twig\SecFormat;
 use Slim\Views\TwigExtension;
 
-$root = __DIR__ . '/public';
+$root = __DIR__;
 $tplDir = array("$root", "$root/templates");
 $tmpDir = NOVOSGA_CACHE;
 $loader = new Twig_Loader_Filesystem($tplDir);
@@ -24,10 +24,16 @@ $twig->addFilter(new SecFormat());
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator("$root"), RecursiveIteratorIterator::LEAVES_ONLY) as $file)
 {
     // force compilation
-    if ($file->isFile() && in_array('twig', explode('.', $file->getBasename()))) {
-        $filename = str_replace($root, '', $file->getPathname());
-        $filename = str_replace('/templates', '', $filename);
-        $twig->loadTemplate($filename);
-        echo "LOADED: {$file->getPathname()} \n";
+    if ($file->isFile()) {
+        $ext = end(explode('.', $file->getBasename()));
+        if ($ext === 'twig') {
+            $filename = str_replace($root, '', $file->getPathname());
+            if (substr($filename, 0, 8) !== '/vendor/') {
+                $filename = str_replace('/templates', '', $filename);
+                echo "LOADING: {$file->getPathname()} ... ";
+                $twig->loadTemplate($filename);
+                echo "[OK]\n";
+            }
+        }
     }
 }
