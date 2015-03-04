@@ -1,9 +1,6 @@
 <?php
 require __DIR__ . '/bootstrap.php';
 
-use Novosga\Twig\SecFormat;
-use Slim\Views\TwigExtension;
-
 $root = __DIR__;
 $tplDir = array("$root", "$root/templates");
 $tmpDir = NOVOSGA_CACHE;
@@ -15,11 +12,11 @@ $twig = new Twig_Environment($loader, array(
     'auto_reload' => true
 ));
 
-$twig->addExtension(new Twig_Extensions_Extension_I18n());
-$twig->addExtension(new TwigExtension());
-$twig->addFilter(new SecFormat());
-// configure Twig the way you want
+$twig->addExtension(new \Twig_Extensions_Extension_I18n());
+$twig->addExtension(new \Slim\Views\TwigExtension());
+$twig->addExtension(new \Novosga\Twig\Extensions());
 
+// configure Twig the way you want
 // iterate over all your templates
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator("$root"), RecursiveIteratorIterator::LEAVES_ONLY) as $file)
 {
